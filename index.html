@@ -565,7 +565,22 @@ function startBrick() {
        <span>♥ <em id="bl">${lives}</em></span><span>PTS <em id="bp">${raw}</em></span></div>`;
   }
   hdr();
-  setupPaddleZone();
+
+  // Detect device type
+  const isMobile = window.matchMedia('(pointer:coarse)').matches || window.innerWidth <= 520;
+
+  if (isMobile) {
+    setupPaddleZone();
+  } else {
+    // PC: hide paddle zone, show keyboard touch controls as fallback
+    document.getElementById('paddleZone').style.display = 'none';
+    document.getElementById('tctrl').innerHTML =
+      `<button class="tbtn" data-k="ArrowLeft">◀</button>
+       <button class="tbtn tbtn-w" data-k=" ">발사</button>
+       <button class="tbtn" data-k="ArrowRight">▶</button>`;
+    document.getElementById('tctrl').style.display = 'none'; // PC doesn't need touch buttons
+    setupTouch();
+  }
 
   // Keyboard
   const keys = {};
@@ -598,9 +613,6 @@ function startBrick() {
   }
 
   mkBricks();
-
-  // Detect if touch device to use paddle zone slider
-  const isMobile = window.matchMedia('(pointer:coarse)').matches || window.innerWidth <= 520;
 
   function update() {
     // Paddle movement
